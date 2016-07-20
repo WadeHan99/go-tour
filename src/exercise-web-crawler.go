@@ -97,7 +97,7 @@ func main() {
 	end := make(chan bool)
 
 	go Crawl1("http://golang.org/", 4, fetcher, out, end)
-L
+L:
 	for {
 		select {
 		case t := <-out:
