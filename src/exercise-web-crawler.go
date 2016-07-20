@@ -92,6 +92,21 @@ func main() {
 	fmt.Println("########### fake ############")
 	fakeCrawl("http://golang.org/", 4, fetcher)
 
+	fmt.Println("########### crawl1 ##########")
+	out := make(chan string)
+	end := make(chan bool)
+
+	go Crawl1("http://golang.org/", 4, fetcher, out, end)
+L
+	for {
+		select {
+		case t := <-out:
+			fmt.Print(t)
+		case <-end:
+			break L
+		}
+	}
+
 	fmt.Println("########## crawl2 ##########")
 	ch := make(chan string)
 	history := make(map[string]bool)
@@ -102,20 +117,6 @@ func main() {
 
 	fmt.Println("============= history ==============")
 	fmt.Println(history)
-
-	fmt.Println("########### crawl1 ##########")
-	out := make(chan string)
-	end := make(chan bool)
-
-	go Crawl1("http://golang.org/", 4, fetcher, out, end)
-	for {
-		select {
-		case t := <-out:
-			fmt.Print(t)
-		case <-end:
-			return
-		}
-	}
 }
 
 // fakeCrawl 使用 fetcher 从某个 URL 开始递归的爬取页面，直到达到最大深度
